@@ -1,9 +1,8 @@
 === Simple Youtube Widget ===
 Contributors: ujw0l
-Donate link:
-Tags: Youtube, continuous playlist, video embed
+Tags: Youtube, channel, playlist , video embed
 Requires at least: 2.8	+
-Tested up to: 4.9
+Tested up to: 5.2.1
 Stable tag: 2.0.0
 License: GPLv2
 
@@ -14,11 +13,11 @@ Plugin that provides users option to display Youtube Widget on the Sidebar or Fo
 
 This plugin lets you to display Youtube widget on sidebar with the themes that supports sidebar and Footer
 
-It displays video you chose and continuous plays playlist of your choice with video id and playlist is 
+It displays video and playlist of your choice with video id and playlist id.
+It also lets you display all videos from you youtube channel with option to navigate to next nd previous button.
+No google API key needed. Uses Youtube rss feed.  
 
-Good for Live broadcast through Youtube too
-
-You have choice between single video and playlist
+You have choice between single video , playlist and channel.
 
 
 Note:     
@@ -66,6 +65,11 @@ You can use this plugin to display videos on sidebar or Footer.
 = 1.0 =
 * This is first stable version 
 * More upgrades to follow
+
+= 2.0 =
+* It now support boardcasting channel.
+* Navigation button added on front end. 
+* Instruction on widget area.
 
 
 
