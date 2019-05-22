@@ -2,10 +2,11 @@
 /*
  Plugin Name: Simple Youtube Widget
  Plugin URI:
- Description: Easy to use youtube plugin, no API needed, live channel broadcast
- Version: 1.0.0
+ Description: Easy to use youtube plugin, no API key needed, all you need is video or playlist id of boardcatable videos
+ Version: 2.0.0
  Author: Ujwol Bastakoti
- Author URI:
+ Author URI:http://ujwolbastakoti.wordpress.com
+ text-domain:simple-youtube-widget 
  License: GPLv2
  */
 
@@ -17,17 +18,24 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
         parent::__construct(
             'simple_youtube_widget', // Base ID
             'Simple Youtube Widget', // Name
-            array( 'description' => __( 'Easy to use youtube widget', 'text_domain' ), ) // Args
+            array( 'description' => __( 'Easy to use youtube widget', 'simple-youtube-widget' ), ) // Args
             );
     }//end of function construct
     
+
+ public function enqueue_youtube_scripts_style( ){
+   wp_enqueue_style( 'dashicons' );
+   wp_enqueue_script('simpleYoutubeJs', plugins_url('js/simple_youtube.js',__FILE__ ), array(),'',true );
+
+ }
+
     public function form( $instance ) {
         if ( isset( $instance[ 'title' ] ) ) {
             
             $title = $instance[ 'title' ];
         }
         else {
-            $title = __( 'Youtube', 'text_domain' );
+            $title = __( 'Youtube', 'simple-youtube-widget' );
         }
         ?>
     
@@ -36,8 +44,6 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
 				
 				<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		    </p>
-		    
-		    
 		     <p>
 				<label for="<?php echo $this->get_field_id( 'yotube_video_id' ); ?>"><?php _e( 'Video ID: For Playlist to play leave this field empty' ); ?></label> 
 				
@@ -45,23 +51,33 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
 		    </p>
 		    
 		     <p>
-				<label for="<?php echo $this->get_field_id( 'yotube_playlist_id' ); ?>"><?php _e( 'Playlist ID:  ' ); ?></label> 
+				<label for="<?php echo $this->get_field_id( 'youtube_playlist_id' ); ?>"><?php _e( 'Playlist ID:  ' ); ?></label> 
 				
 				<input class="widefat" id="<?php echo $this->get_field_id( 'youtube_playlist_id' ); ?>" name="<?php echo $this->get_field_name( 'youtube_playlist_id' ); ?>" type="text" value="<?php if(isset($instance['youtube_playlist_id'])){ echo esc_attr( $instance['youtube_playlist_id' ] ); } ?>" />
 		    </p>
-		    <!--
-		    <p>
-				<label for="<?php echo $this->get_field_id( 'yotube_channel_id' ); ?>"><?php _e( 'Channel ID:' ); ?></label> 
-				
+            <p>
+				<label for="<?php echo $this->get_field_id( 'yotube_channel_id' ); ?>"><?php _e( 'Channel Id : ' ); ?><a target="_blank" href="<?=esc_url('https://www.youtube.com/account_advanced')?>" ><?=__("Get it here")?> </a> </label> 
 				<input class="widefat" id="<?php echo $this->get_field_id( 'youtube_channel_id' ); ?>" name="<?php echo $this->get_field_name( 'youtube_channel_id' ); ?>" type="text" value="<?php if(isset($instance['youtube_channel_id'])){ echo esc_attr( $instance['youtube_channel_id' ] ); } ?>" />
 		    </p>
-		    -->
+
 		    <p>
 				<label for="<?php echo $this->get_field_id( 'yotube_player_dimension' ); ?>"><?php _e( 'Player Dimension: ' ); ?></label> 
 				<br/>
 				<span>Width:</span><input style="width:100px !important;" id="<?php echo $this->get_field_id( 'youtube_player_width' ); ?>" name="<?php echo $this->get_field_name( 'youtube_player_width' ); ?>" type="text" value="<?php if(isset($instance['youtube_player_width'])){ echo esc_attr( $instance['youtube_player_width' ] ); } ?>" />&nbsp;X&nbsp;
 				<span>Height:</span><input style="width:100px !important;"  id="<?php echo $this->get_field_id( 'youtube_player_height' ); ?>" name="<?php echo $this->get_field_name( 'youtube_player_height' ); ?>" type="text" value="<?php if(isset($instance['youtube_player_height'])){ echo esc_attr( $instance['youtube_player_height' ] ); } ?>" />
 		    </p>
+
+            <ul>
+                <li> Video display priority : </li>
+				<li>
+                       
+                        <ol>
+                          <li> Single video with Video Id entered. </li>
+                          <li> Playlist with Playlis Id entered. </li>
+                          <li> Videos of Channel Id entered</li>
+                        </ol>
+                </li>
+				</ul>
 		    
 		   
    <?php
@@ -81,7 +97,7 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
          public function update( $new_instance, $old_instance ) {
              $instance = array();
              $instance['title'] = strip_tags( $new_instance['title'] );
-             //$instance['youtube_channel_id'] = strip_tags($new_instance['youtube_channel_id']);
+             $instance['youtube_channel_id'] = strip_tags($new_instance['youtube_channel_id']);
              $instance['youtube_playlist_id'] = strip_tags($new_instance['youtube_playlist_id']);
              $instance['youtube_video_id'] = strip_tags($new_instance['youtube_video_id']);
              $instance['youtube_player_width'] = strip_tags($new_instance['youtube_player_width']);
@@ -90,55 +106,20 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
          }//end of function update
          
          
-         /*
          //get the video feed from youtube
          public function youtube_channel_latest_video($youTubeChannelId){
              
-             
-             include_once( ABSPATH . WPINC . '/feed.php' );
-             // Get a SimplePie feed object from the specified feed source and convert them to array.
-             
-               
-                 
-             $feed = fetch_feed('https://www.youtube.com/feeds/videos.xml?channel_id='.trim($youTubeChannelId));
-           
-             $maxitems =0;
-             
-             // Checks that the object is created correctly
-             if ( ! is_wp_error( $feed ) ){
-                 
-                 // Figure out how many total items there are, but limit it to 5.
-                 $maxitems = $feed->get_item_quantity(1);
-                 
-                 // Build an array of all the items, starting with element 0 (first element).
-                 $rss_items = $feed->get_items( 0, 1 );
-             }
-             
-             if($maxitems != 0){
-                 
-              
-                 // Loop through each feed item and display each item as a hyperlink.
-                 foreach ( $rss_items as $item ){
-                     
-                     $sanitizedFeed['permalink'] = $item ->get_permalink();
-                    
-                     
-                 }
-                 
-                 $youtubeVideoLink = str_replace('?v=', '/',str_replace('watch', 'embed',$sanitizedFeed['permalink']));
-                 
-             }//end of if
-             
-             
-          
-             return $youtubeVideoLink;
-             
+            $url = 'https://www.youtube.com/feeds/videos.xml?channel_id='.trim($youTubeChannelId);
+            $xml= json_decode(json_encode(simplexml_load_file($url), JSON_FORCE_OBJECT), TRUE) ;
+            foreach ($xml['entry'] as $item ):
+
+                $items [array_pop (explode(':',$item['id']))] = $item['title'];
+            endforeach;
+             return  $items;             
              
              
          }//end of function
          
-         */
-    
    
          /**
           * Front-end display of widget.
@@ -149,8 +130,7 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
           * @param array $instance Saved values from database.
           */
          public function widget( $args, $instance ) {
-             
-             
+            $this->enqueue_youtube_scripts_style();
              extract( $args );
              $title = apply_filters( 'widget_title', $instance['title'] );
              echo $before_widget;
@@ -160,45 +140,51 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
              
              extract( $args );
              $title = apply_filters( 'widget_title', $instance['title'] );
-             
-             if(!empty($instance['youtube_video_id'] )){
-                
-                 
-                 $videoToDisplay = 'https://www.youtube.com/embed/'.$instance['youtube_video_id'];
-                 
-                 
-                }
-                else if(!empty($instance['youtube_playlist_id'])){
-                    
-                    $videoToDisplay = "https://www.youtube.com/embed/videoseries?list=".$instance['youtube_playlist_id'];
-                  }
-                  /*
-                  else if(!empty($instance['youtube_channel_id'])) {
-                      
-                      $videoToDisplay =  $this->youtube_channel_latest_video($instance['youtube_channel_id']);
-                  }
-                  */
-                  else{
-                      
-                      
-                  }
-             ?>
-             
-               <div  class="youtube_widget_area">
-               
-               
-                
-                <iframe width="<?php if(!empty($instance['youtube_player_width'])){echo($instance['youtube_player_width']);}else{echo"400";}?>" height="<?php if(!empty($instance['youtube_player_height'])){echo($instance['youtube_player_height']);}else{echo"315";}?>" src="<?php echo($videoToDisplay);?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
-               						  
-               	  
-               
+             $width =  !empty($instance['youtube_player_width'])? esc_attr($instance['youtube_player_width']) :"400";
+             $height = !empty($instance['youtube_player_height'])? esc_attr($instance['youtube_player_height']) : "315";
+             if(!empty($instance['youtube_video_id'] )):
+                 $videoToDisplay = 'https://www.youtube.com/embed/'.$instance['youtube_video_id'];  
+                 ?>
+                <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area"  >
+                   <iframe  frameborder="0"  allow="autoplay"; src="<?=$videoToDisplay?>" encrypted-media" allowfullscreen></iframe>
                </div>
-             
-             
-           <?php     
-            
-           
-            
+                 <?php               
+                elseif(!empty($instance['youtube_playlist_id'])):
+                    $videoToDisplay = "https://www.youtube.com/embed/videoseries?list=".$instance['youtube_playlist_id'];
+
+                    ?>
+
+                    <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area" >
+                       <iframe  width="<?=$width?>" height="<?=$height?>" src="<?=$videoToDisplay?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
+                   </div>
+                     <?php   
+                  elseif(!empty($instance['youtube_channel_id'])) :
+                      $videoList =  $this->youtube_channel_latest_video($instance['youtube_channel_id']);
+                      $nextDisplay = 'display:none;';
+                      $dataType = ' '; 
+                      $i= 1;
+                      foreach( $videoList as $key => $title ):
+                        if($i === 1) :
+                          $firstVid = $key;
+                          $firstVidTitle = $title; 
+                         elseif ($i=== 2) :
+                            $nextDisplay = 'display:inline-block;';  
+                        endif;   
+                        $dataType .= "data-video-{$i}='{$key}:syt:{$title}' "; 
+                        $i++;
+                      endforeach;  
+
+                      ?>
+                      <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area" <?=$dataType?> >
+                      <h5 id="syt-title-header" style="text-align:center;width:100%; height:30px; padding:5px; overflow:hidden;"><?=$firstVidTitle?></h5>
+                         <iframe width="<?=$width?>" height="<?=$height?>" src="https://www.youtube.com/embed/<?=$firstVid?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
+                     <div id="syt-button-div" style="display:block;">
+                        <a id="syt_prev_vid" title="Previous" style="float:left; display:none;margin-left:0px;text-decoration:none;" data-vid-num = "0" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipback" > <a>
+                         <a id="syt_next_vid" title="Next" data-vid-num = "2" style="float:right;<?=$nex?>;margin-right:0px;text-decoration:none;" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipforward"></a>
+                     </div>
+                     </div>
+                       <?php   
+                 endif; 
          }
 }
 
