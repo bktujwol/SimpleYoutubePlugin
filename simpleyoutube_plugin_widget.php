@@ -3,7 +3,7 @@
  Plugin Name: Simple Youtube Widget
  Plugin URI:
  Description: Easy to use youtube plugin, no API key needed, all you need is video or playlist id of boardcatable videos
- Version: 2.0.0
+ Version: 2.0.1
  Author: Ujwol Bastakoti
  Author URI:http://ujwolbastakoti.wordpress.com
  text-domain:simple-youtube-widget 
@@ -136,8 +136,7 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
              echo $before_widget;
              if ( ! empty( $title ) )
                  echo $before_title . $title . $after_title;
-             
-             
+            
              extract( $args );
              $title = apply_filters( 'widget_title', $instance['title'] );
              $width =  !empty($instance['youtube_player_width'])? esc_attr($instance['youtube_player_width']) :"400";
@@ -146,16 +145,14 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
                  $videoToDisplay = 'https://www.youtube.com/embed/'.$instance['youtube_video_id'];  
                  ?>
                 <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area"  >
-                   <iframe  frameborder="0"  allow="autoplay"; src="<?=$videoToDisplay?>" encrypted-media" allowfullscreen></iframe>
+                   <iframe  frameborder="0"  allow="autoplay"; src="<?=$videoToDisplay?>" encrypted-media allowfullscreen></iframe>
                </div>
                  <?php               
                 elseif(!empty($instance['youtube_playlist_id'])):
                     $videoToDisplay = "https://www.youtube.com/embed/videoseries?list=".$instance['youtube_playlist_id'];
-
                     ?>
-
                     <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area" >
-                       <iframe  width="<?=$width?>" height="<?=$height?>" src="<?=$videoToDisplay?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
+                       <iframe  width="<?=$width?>" height="<?=$height?>" src="<?=$videoToDisplay?>" frameborder="0"  allow="autoplay"; encrypted-media allowfullscreen></iframe>
                    </div>
                      <?php   
                   elseif(!empty($instance['youtube_channel_id'])) :
@@ -178,11 +175,13 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
                       <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area" <?=$dataType?> >
                       <h5 id="syt-title-header" style="text-align:center;width:100%; height:30px; padding:5px; overflow:hidden;"><?=$firstVidTitle?></h5>
                          <iframe width="<?=$width?>" height="<?=$height?>" src="https://www.youtube.com/embed/<?=$firstVid?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
-                     <div id="syt-button-div" style="display:block;">
-                        <a id="syt_prev_vid" title="Previous" style="float:left; display:none;margin-left:0px;text-decoration:none;" data-vid-num = "0" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipback" > <a>
-                         <a id="syt_next_vid" title="Next" data-vid-num = "2" style="float:right;<?=$nex?>;margin-right:0px;text-decoration:none;" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipforward"></a>
+                        <div id="syt-button-div" style="display:block;">
+                            <a id="syt_prev_vid" title="Previous" style="float:left; display:none;margin-left:0px;text-decoration:none;" data-vid-num = "0" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipback" > </a>
+                            <a id="syt_next_vid" title="Next" data-vid-num = "2" style="float:right;<?=$nex?>;margin-right:0px;text-decoration:none;" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipforward"></a>
+                        </div>
                      </div>
-                     </div>
+
+                     </section>
                        <?php   
                  endif; 
          }
@@ -194,6 +193,6 @@ function register_simpleyoutube_plugin_with_widget(){
     register_widget( "simpleyoutube_plugin_with_widget" );
 }
 
-add_action( 'widgets_init', 'register_simpleyoutube_plugin_with_widget' );	
+add_action( 'widgets_init', 'register_simpleyoutube_plugin_with_widget' );
 
 ?>
