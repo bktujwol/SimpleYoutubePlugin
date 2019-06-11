@@ -172,7 +172,7 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
                       endforeach;  
 
                       ?>
-                      <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area" <?=$dataType?> >
+                      <div  width="<?=$width?>" height="<?=$height?>" style="height:<?=$height?>px; width:<?=$width?>px;"  id="youtube_widget_area" <?=$dataType?> >
                       <h5 id="syt-title-header" style="text-align:center;width:100%; height:30px; padding:5px; overflow:hidden;"><?=$firstVidTitle?></h5>
                          <iframe width="<?=$width?>" height="<?=$height?>" src="https://www.youtube.com/embed/<?=$firstVid?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
                         <div id="syt-button-div" style="display:block;">
