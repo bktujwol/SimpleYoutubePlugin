@@ -2,7 +2,7 @@
 Contributors: ujw0l
 Tags: Youtube, channel, playlist , video embed
 Requires at least: 2.8	+
-Tested up to: 5.2.1
+Tested up to: 5.5.0
 Stable tag: 2.0.1
 License: GPLv2
 
@@ -71,6 +71,6 @@ You can use this plugin to display videos on sidebar or Footer.
 * Navigation button added on front end. 
 * Instruction on widget area.
 
-
-
+= 2.0.1 =
+* Widget width bug fix
 

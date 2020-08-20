@@ -1,11 +1,11 @@
 <?php 
 /*
  Plugin Name: Simple Youtube Widget
- Plugin URI:
+ Plugin URI:https://github.com/ujw0l/SimpleYoutubePlugin
  Description: Easy to use youtube plugin, no API key needed, all you need is video or playlist id of boardcatable videos
  Version: 2.0.1
  Author: Ujwol Bastakoti
- Author URI:http://ujwolbastakoti.wordpress.com
+ Author URI:http://ujw0l.github.io/
  text-domain:simple-youtube-widget 
  License: GPLv2
  */
