@@ -3,7 +3,7 @@ Contributors: ujw0l
 Tags: Youtube, channel, playlist , video embed
 Requires at least: 2.8	+
 Tested up to: 5.5.0
-Stable tag: 2.0.1
+Stable tag: 2.5.0
 License: GPLv2
 
 Plugin that provides users option to display Youtube Widget on the Sidebar or Footer	
@@ -73,4 +73,9 @@ You can use this plugin to display videos on sidebar or Footer.
 
 = 2.0.1 =
 * Widget width bug fix
+
+= 2.5.0 =
+* Minor bug fixes 
+* Autoplay suport added
+
 

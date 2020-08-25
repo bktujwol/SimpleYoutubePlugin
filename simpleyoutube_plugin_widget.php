@@ -3,7 +3,7 @@
  Plugin Name: Simple Youtube Widget
  Plugin URI:https://github.com/ujw0l/SimpleYoutubePlugin
  Description: Easy to use youtube plugin, no API key needed, all you need is video or playlist id of boardcatable videos
- Version: 2.0.1
+ Version: 2.5.0
  Author: Ujwol Bastakoti
  Author URI:http://ujw0l.github.io/
  text-domain:simple-youtube-widget 
@@ -56,25 +56,34 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
 				<input class="widefat" id="<?php echo $this->get_field_id( 'youtube_playlist_id' ); ?>" name="<?php echo $this->get_field_name( 'youtube_playlist_id' ); ?>" type="text" value="<?php if(isset($instance['youtube_playlist_id'])){ echo esc_attr( $instance['youtube_playlist_id' ] ); } ?>" />
 		    </p>
             <p>
-				<label for="<?php echo $this->get_field_id( 'yotube_channel_id' ); ?>"><?php _e( 'Channel Id : ' ); ?><a target="_blank" href="<?=esc_url('https://www.youtube.com/account_advanced')?>" ><?=__("Get it here")?> </a> </label> 
+				<label for="<?php echo $this->get_field_id( 'yotube_channel_id' ); ?>"><?php _e( 'Channel Id : ' ); ?><a target="_blank" href="<?=esc_url('https://www.youtube.com/account_advanced')?>" ><?=__("Get it here",'simple-youtube-widget')?> </a> </label> 
 				<input class="widefat" id="<?php echo $this->get_field_id( 'youtube_channel_id' ); ?>" name="<?php echo $this->get_field_name( 'youtube_channel_id' ); ?>" type="text" value="<?php if(isset($instance['youtube_channel_id'])){ echo esc_attr( $instance['youtube_channel_id' ] ); } ?>" />
 		    </p>
+
+        <p>
+        <?php $auto_play =  '1' == $instance['video_auto_play' ] ? 'checked':'' ; ?>
+
+				<label for="<?php echo $this->get_field_id( 'video_auto_play' ); ?>"><?php _e( 'Autoplay:' ); ?></label>
+				<input <?= $auto_play?> class="widefat" id="<?php echo $this->get_field_id( 'video_auto_play' ); ?>" name="<?php echo $this->get_field_name( 'video_auto_play' ); ?>" type="checkbox"  value="1" />
+		   <i style="font-size:10px;"><?=__("Check for autoplay videos",'simple-youtube-widget')?></i>
+        </p>
 
 		    <p>
 				<label for="<?php echo $this->get_field_id( 'yotube_player_dimension' ); ?>"><?php _e( 'Player Dimension: ' ); ?></label> 
 				<br/>
-				<span>Width:</span><input style="width:100px !important;" id="<?php echo $this->get_field_id( 'youtube_player_width' ); ?>" name="<?php echo $this->get_field_name( 'youtube_player_width' ); ?>" type="text" value="<?php if(isset($instance['youtube_player_width'])){ echo esc_attr( $instance['youtube_player_width' ] ); } ?>" />&nbsp;X&nbsp;
-				<span>Height:</span><input style="width:100px !important;"  id="<?php echo $this->get_field_id( 'youtube_player_height' ); ?>" name="<?php echo $this->get_field_name( 'youtube_player_height' ); ?>" type="text" value="<?php if(isset($instance['youtube_player_height'])){ echo esc_attr( $instance['youtube_player_height' ] ); } ?>" />
+				<input placeholder='<?=__('Width','simple-youtube-widget')?>' style="width:100px !important;" id="<?php echo $this->get_field_id( 'youtube_player_width' ); ?>" name="<?php echo $this->get_field_name( 'youtube_player_width' ); ?>" type="text" value="<?php if(isset($instance['youtube_player_width'])){ echo esc_attr( $instance['youtube_player_width' ] ); } ?>" />&nbsp;X&nbsp;
+        <input placeholder='<?=__('Height','simple-youtube-widget')?>' style="width:100px !important;"  id="<?php echo $this->get_field_id( 'youtube_player_height' ); ?>" name="<?php echo $this->get_field_name( 'youtube_player_height' ); ?>" type="text" value="<?php if(isset($instance['youtube_player_height'])){ echo esc_attr( $instance['youtube_player_height' ] ); } ?>" />
 		    </p>
 
+
             <ul>
-                <li> Video display priority : </li>
+                <li> <?=__('Video display priority','simple-youtube-widget')?> : </li>
 				<li>
                        
                         <ol>
-                          <li> Single video with Video Id entered. </li>
-                          <li> Playlist with Playlis Id entered. </li>
-                          <li> Videos of Channel Id entered</li>
+                          <li> <?=__('Single video with Video Id entered',"simple-youtube-widget")?>. </li>
+                          <li> <?=__('Playlist with Playlis Id entered',"simple-youtube-widget")?>. </li>
+                          <li> <?=__('Videos of Channel Id entered','simple-youtube-widget')?></li>
                         </ol>
                 </li>
 				</ul>
@@ -102,6 +111,7 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
              $instance['youtube_video_id'] = strip_tags($new_instance['youtube_video_id']);
              $instance['youtube_player_width'] = strip_tags($new_instance['youtube_player_width']);
              $instance['youtube_player_height'] = strip_tags($new_instance['youtube_player_height']);
+             $instance['video_auto_play'] = strip_tags($new_instance['video_auto_play']);
              return $instance;
          }//end of function update
          
@@ -139,17 +149,18 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
             
              extract( $args );
              $title = apply_filters( 'widget_title', $instance['title'] );
+             $autoPlay = '1'== $instance['video_auto_play'] ? '1' : '0';
              $width =  !empty($instance['youtube_player_width'])? esc_attr($instance['youtube_player_width']) :"400";
              $height = !empty($instance['youtube_player_height'])? esc_attr($instance['youtube_player_height']) : "315";
              if(!empty($instance['youtube_video_id'] )):
-                 $videoToDisplay = 'https://www.youtube.com/embed/'.$instance['youtube_video_id'];  
+                 $videoToDisplay = 'https://www.youtube.com/embed/'.$instance['youtube_video_id'].'?'.'autoplay='.$autoPlay;  
                  ?>
                 <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area"  >
                    <iframe  frameborder="0"  allow="autoplay"; src="<?=$videoToDisplay?>" encrypted-media allowfullscreen></iframe>
                </div>
                  <?php               
                 elseif(!empty($instance['youtube_playlist_id'])):
-                    $videoToDisplay = "https://www.youtube.com/embed/videoseries?list=".$instance['youtube_playlist_id'];
+                    $videoToDisplay = "https://www.youtube.com/embed/videoseries?list=".$instance['youtube_playlist_id'].'&'.'autoplay='.$autoPlay;
                     ?>
                     <div  width="<?=$width?>" height="<?=$height?>"  id="youtube_widget_area" >
                        <iframe  width="<?=$width?>" height="<?=$height?>" src="<?=$videoToDisplay?>" frameborder="0"  allow="autoplay"; encrypted-media allowfullscreen></iframe>
@@ -174,7 +185,7 @@ class simpleyoutube_plugin_with_widget extends WP_Widget{
                       ?>
                       <div  width="<?=$width?>" height="<?=$height?>" style="height:<?=$height?>px; width:<?=$width?>px;"  id="youtube_widget_area" <?=$dataType?> >
                       <h5 id="syt-title-header" style="text-align:center;width:100%; height:30px; padding:5px; overflow:hidden;"><?=$firstVidTitle?></h5>
-                         <iframe width="<?=$width?>" height="<?=$height?>" src="https://www.youtube.com/embed/<?=$firstVid?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
+                         <iframe width="<?=$width?>" height="<?=$height?>" src="https://www.youtube.com/embed/<?=$firstVid?>?autoplay=<?=$autoPlay?>" frameborder="0"  allow="autoplay"; encrypted-media" allowfullscreen></iframe>
                         <div id="syt-button-div" style="display:block;">
                             <a id="syt_prev_vid" title="Previous" style="float:left; display:none;margin-left:0px;text-decoration:none;" data-vid-num = "0" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipback" > </a>
                             <a id="syt_next_vid" title="Next" data-vid-num = "2" style="float:right;<?=$nex?>;margin-right:0px;text-decoration:none;" href="javaScript:void(0)" class="dashicons-before dashicons-controls-skipforward"></a>
